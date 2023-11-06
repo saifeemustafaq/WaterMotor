@@ -33,7 +33,7 @@
   // Sends a message when the button is pressed
   function sendMQTT(status) {
     const message = new Paho.MQTT.Message(status);
-    message.destinationName = "home/esp32/servo";
+    message.destinationName = "home/saifeevilla288786/esp32/servo"; // Updated topic
     client.send(message);
   }
 </script>
