@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>ESP32 Servo Control</h2>
+
+<button onclick="sendMQTT('ON')">Turn On</button>
+<button onclick="sendMQTT('OFF')">Turn Off</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.min.js"></script>
+<script>
+  // Create a client instance
+  const client = new Paho.MQTT.Client("broker.hivemq.com", Number(8000), "clientId" + new Date().getTime());
+
+  // Set callback handlers
+  client.onConnectionLost = onConnectionLost;
+
+  // Connect the client
+  client.connect({onSuccess:onConnect});
+
+  // Called when the client connects
+  function onConnect() {
+    console.log("onConnect");
+  }
+
+  // Called when the client loses its connection
+  function onConnectionLost(responseObject) {
+    if (responseObject.errorCode !== 0) {
+      console.log("onConnectionLost:", responseObject.errorMessage);
+    }
+  }
+
+  // Sends a message when the button is pressed
+  function sendMQTT(status) {
+    const message = new Paho.MQTT.Message(status);
+    message.destinationName = "home/esp32/servo";
+    client.send(message);
+  }
+</script>
+
+</body>
+</html>
