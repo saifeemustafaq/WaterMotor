@@ -1,6 +1,6 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
-//#include <Servo.h>
+#include <ESP32Servo.h>
 
 // Network and MQTT configurations
 const char* ssid = "TOP_Floor";
@@ -8,7 +8,8 @@ const char* password = "Batman@359517";
 const char* mqtt_server = "broker.hivemq.com";
 const char* control_topic_servo1 = "home/saifeevilla288786/esp32/servo1";
 const char* control_topic_servo2 = "home/saifeevilla288786/esp32/servo2";
-const char* client_id = "ESP32Client_" + String(random(0xffff), HEX); // Unique client ID
+String client_id_str = "ESP32Client_" + String(random(0xffff), HEX);
+const char* client_id = client_id_str.c_str();
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -50,7 +51,7 @@ void callback(char* topic, byte* message, unsigned int length) {
 void reconnect() {
   unsigned long reconnectTime = 5000; // Initial reconnect time
   while (!client.connected()) {
-    if (client.connect(client_id.c_str())) {
+    if (client.connect(client_id)) {  // Corrected line
       client.subscribe(control_topic_servo1);
       client.subscribe(control_topic_servo2);
     } else {
@@ -59,6 +60,7 @@ void reconnect() {
     }
   }
 }
+
 
 void setup() {
   myservo1.attach(14); // ESP32 pin connected to the first servo signal
